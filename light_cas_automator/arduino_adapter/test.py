@@ -2,23 +2,18 @@ import pyfirmata
 import time
 if __name__ == '__main__':
     board = pyfirmata.Arduino('COM5')
-    print("Communication Successfully started")
+    LED_links = board.get_pin('d:2:o')
+    LED_rechts = board.get_pin('d:3:o')
 
-    def boring():
-        while True:
-            board.digital[2].write(1)
-            time.sleep(1)
-            board.digital[2].write(0)
-            time.sleep(1)
-            board.digital[2].write(1)
-            time.sleep(3)
-
-    def crazy():
+    def LED_start():
 
         while True:
-            board.digital[2].write(1)
-            time.sleep(0.3)
-            board.digital[2].write(0)
-            time.sleep(0.3)
+            LED_links.write(1)
+            LED_rechts.write(0)
+            time.sleep(1.0)
 
-crazy()
+            LED_links.write(0)
+            LED_rechts.write(1)
+            time.sleep(1.0)
+
+LED_start()

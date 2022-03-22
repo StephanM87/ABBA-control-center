@@ -1,0 +1,2 @@
+elementpath == 2.5.0
+requests == 2.26.0
