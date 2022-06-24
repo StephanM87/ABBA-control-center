@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restx import Api, Resource
 from flask_cors import CORS
+import pyfirmata
 
 
 
@@ -47,5 +48,9 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
+    '''
+    board = pyfirmata.Arduino("COM3")
+    led = board.get_pin('d:6:o')
+    led.write(1)
+    '''
     app.run(debug=True)
-    
