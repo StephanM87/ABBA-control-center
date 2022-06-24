@@ -7,7 +7,7 @@ import pyfirmata
 
 from light_cas_automator.arduino_adapter.control_panel import ControlPanel
 
-board = pyfirmata.Arduino(self.COM)
+#board = pyfirmata.Arduino(COM)
 
 namespace = Namespace("api/ot", description="Route whicht creates Enzymeml documents and returns them in form of omex archives")
 
