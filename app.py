@@ -10,7 +10,7 @@ import pyfirmata
 
 from assets.configurations import Configurations 
 from light_cas_automator.arduino_adapter.control_arduino import namespace as pump_control
-from light_cas_automator.arduino_adapter.control_panel import ControlPanel
+#from light_cas_automator.arduino_adapter.control_panel import ControlPanel
 from light_cas_automator.nmr_adapter.nmr_adapter import namespace as nmr_control
 
 
@@ -48,9 +48,4 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    '''
-    board = pyfirmata.Arduino("COM3")
-    led = board.get_pin('d:6:o')
-    led.write(1)
-    '''
-    app.run(debug=True)
+    app.run()

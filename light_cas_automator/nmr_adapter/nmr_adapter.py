@@ -6,7 +6,7 @@ import socket
 import time
 
 
-from light_cas_automator.arduino_adapter.control_panel import ControlPanel
+#from light_cas_automator.arduino_adapter.control_panel import ControlPanel
 
 
 

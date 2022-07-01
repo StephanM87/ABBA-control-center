@@ -1,7 +1,9 @@
 import pyfirmata
 
-class ControlPanel:
 
+class ControlPanel:
+    pass
+'''
     def __init__(self, board):
 
         self.COM = board
@@ -13,6 +15,7 @@ class ControlPanel:
             return board
         except Exception as Err:
             print(Err, "already initialised")
+            raise
     
     def start_led(self):
         board = self.build_connection()
@@ -25,6 +28,8 @@ class ControlPanel:
             LED_links = board.get_pin('d:6:o')
             LED_links.write(1)
             #board.exit()
+
+'''
 '''
     def stop_led(self):
         #board = self.build_connection()
