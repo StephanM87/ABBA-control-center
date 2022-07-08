@@ -60,42 +60,17 @@ class PumpControl(Resource):
 class PumpControl(Resource):
     @namespace.doc()
     def get(self):
-        #control = ControlPanel("COM3")
-        #control.start_pump_foward()
-        #p_pump_pwm = board.get_pin('d:9:p')
         p_pwm.write(0.7)
-        #p_pump_direction = board.get_pin('d:3:o')
-        #p_pump_direction.write(0)
-        #p_pump_on_off = board.get_pin("d:2:o") 
         p_on_off.write(0)
-        
-        
         return "Pumpe läuft"
-
-
-
-
 
 @namespace.route("/stop_pump")
 class PumpControl(Resource):
     @namespace.doc()
     def get(self):
-        #p_pump_pwm = board.get_pin('d:9:p')
-        #p_pump_pwm.write(0.7)
-        #p_pump_direction = board.get_pin('d:3:o')
-        #p_pump_direction.write(0)
-        #p_pump_on_off = board.get_pin("d:2:o") 
-        #p_pump_on_off.write(1)
-        #control = ControlPanel("COM3")
-        #control.stop_pump()
-        p_pwm.write(0.7)
-        #p_pump_direction = board.get_pin('d:3:o')
-        #p_pump_direction.write(0)
-        #p_pump_on_off = board.get_pin("d:2:o") 
+        p_pwm.write(0.7) 
         p_on_off.write(1)
         return "Pumpe aus"
-
-
 @namespace.route("/stop_flow")
 class PumpControl(Resource):
     @namespace.doc()
@@ -114,24 +89,6 @@ class PumpControl(Resource):
         
         HOST = "127.0.0.1"  # Replace
         PORT = 13000 #Default port
-        #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #s.connect((HOST, PORT))
-        '''
-        message  = "<Message>\r\n"
-        message += "   <CheckShimRequest/>\r\n"
-        message += "</Message>\r\n"
-        s.send(message.encode())
-        print('\r\nMessage received:')
-        s.settimeout(10.0)
-        try:
-            print("measurement ongoing")
-        except socket.error as msg:
-            s.settimeout(None)
-            # will only get here if a timeout occurs
-            print('\r\nClose connection')
-            s.close()
-        '''
-
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((HOST, PORT))
         message  = "<Message>\r\n"
