@@ -1,80 +1,25 @@
-import io
-from flask import Flask
-from flask_restx import Namespace, Resource, Api, fields, abort
-from werkzeug.exceptions import BadRequest, HTTPException
-import os
-import pyfirmata
-import time
 import socket
-
-from light_cas_automator.arduino_adapter.control_commands import ControlCommands
-
-
-#from light_cas_automator.arduino_adapter.control_panel import ControlPanel
-
-try:
-    #arduino = ControlPanel("COM3")
-    board = pyfirmata.Arduino("COM3")
-    #board = "hallo"
-    p_pwm = board.get_pin('d:9:p')
-    p_on_off = board.get_pin("d:2:o")
-    p_direction = board.get_pin('d:3:o')
-    LED = board.get_pin('d:6:o')
-    #LED.write(1)
-    #time.sleep(10)
-    #LED.write(0)
-    print("disconnect")
-    #board.exit()
-
-    print("halo")
-    print("the board is:", board)
-except Exception as err:
-    print(err)
-    raise
+import time
 
 
-namespace = Namespace("api/ot", description="Route whicht creates Enzymeml documents and returns them in form of omex archives")
 
-@namespace.route("/light_up")
-class PumpControl(Resource):
-    @namespace.doc()
-    def get(self):
-        command = ControlCommands()
-        command.start_LED(LED)
-        return "LED leuchtet"
+class ControlCommands:
+    
+    def start_LED(self, LED):
+        LED.write(1)
 
-@namespace.route("/light_down")
-class PumpControl(Resource):
-    @namespace.doc()
-    def get(self):
-        '''
-        control = ControlPanel("COM3")
-        control.stop_led()
-        '''
-        
-        LED.write(0)
-        return "LED aus"
-        
+    def stop_LED(self, LED):
+        LED.write(1)
 
-@namespace.route("/start_pump")
-class PumpControl(Resource):
-    @namespace.doc()
-    def get(self):
+    def start_peristaltic_pump(self, p_pwm, p_on_off):
         p_pwm.write(0.7)
         p_on_off.write(0)
-        return "Pumpe läuft"
 
-@namespace.route("/stop_pump")
-class PumpControl(Resource):
-    @namespace.doc()
-    def get(self):
+    def stop_peristaltic_pump(self, p_pwm, p_on_off):
         p_pwm.write(0.7) 
         p_on_off.write(1)
-        return "Pumpe aus"
-@namespace.route("/stop_flow")
-class PumpControl(Resource):
-    @namespace.doc()
-    def get(self):
+
+    def stop_flow_measurement(self, p_pwm, p_on_off, p_direction):
         p_on_off.write(1)
         p_direction.write(1) # 1 is counterclockwise pumps into nmr
         p_pwm.write(0.8)
@@ -82,8 +27,6 @@ class PumpControl(Resource):
         p_on_off.write(0)
         time.sleep(25)
         p_pwm.write(0.65)
-        #time.sleep(10)
-        #p_direction.write(0)
         time.sleep(35)
         p_on_off.write(1)
         
@@ -131,9 +74,6 @@ class PumpControl(Resource):
         p_on_off.write(1)
 
 
-        return "Pumpe aus"
+
     
-        
-    
-        
-        
+
