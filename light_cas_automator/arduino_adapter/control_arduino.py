@@ -129,11 +129,12 @@ class PumpControl(Resource):
         #p_direction.write(1)
         time.sleep(50)
         p_on_off.write(1)
-
-
         return "Pumpe aus"
-    
-        
-    
-        
-        
+
+@namespace.route("/automated_system")
+class AutmatedSystem(Resource):
+    @namespace.doc()
+    def get(self):
+        print("lets go")
+        time.sleep(10)
+        return "alles_ok"
