@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Message>
+  <StatusNotification timestamp="01:09:40">
+    <Progress protocol="SHIM" percentage="60" />
+  </StatusNotification>
+</Message>

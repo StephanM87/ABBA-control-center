@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Message>
+  <CheckShimResponse error="System is not ready.&#xA;Line width at 50% 1,036053 &gt; 1 Hz.&#xA;Please run a quickshim.">
+    <OperatingTemperature>true</OperatingTemperature>
+    <StableTemperatures>true</StableTemperatures>
+    <StableLock>true</StableLock>
+    <LineWidth>1.03605282</LineWidth>
+    <BaseWidth>9.829095</BaseWidth>
+    <SystemIsReady>false</SystemIsReady>
+  </CheckShimResponse>
+</Message>
