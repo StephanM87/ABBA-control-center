@@ -11,6 +11,8 @@ from light_cas_automator.arduino_adapter.control_commands import ControlCommands
 from light_cas_automator.extract_measurement_data.extract_measurement_data import MeasurementExtractor
 
 #from light_cas_automator.arduino_adapter.control_panel import ControlPanel
+HOST = "127.0.0.1"  # Replace
+PORT = 13000 #Default port
 
 try:
     #arduino = ControlPanel("COM3")
@@ -20,6 +22,7 @@ try:
     p_on_off = board.get_pin("d:2:o")
     p_direction = board.get_pin('d:3:o')
     LED = board.get_pin('d:6:o')
+
     #LED.write(1)
     #time.sleep(10)
     #LED.write(0)
@@ -220,3 +223,20 @@ class AutmatedSystem(Resource):
         data = MeasurementExtractor("hallo").get_measurement_folder()
         print(data.head())   
         return "alles_ok"
+
+
+@namespace.route("/automated_system")
+class AutomatedProcess(Resource):
+    @namespace.doc()
+
+    def get(self):
+
+        # Pump the reactor content into the NMR
+        ControlCommands.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
+
+        # Shim the reaction sample
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((HOST, PORT))
+        message = ControlCommands.start_shim()
+        s.send(message.encode())

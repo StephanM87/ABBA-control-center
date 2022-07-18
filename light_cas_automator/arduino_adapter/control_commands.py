@@ -6,18 +6,181 @@ import time
 class ControlCommands:
     
     def start_LED(self, LED):
+        '''
+        Enlights the LED Strip
+
+        Parameters
+        ----------
+        LED: object 
+            pin controller (digital pin 6) of the arduino
+        
+        Returns
+        -------
+        None
+        '''
         LED.write(1)
 
     def stop_LED(self, LED):
+        '''
+        Stops the LED Strip
+
+        Parameters
+        ----------
+        LED: object 
+            pin controller (digital pin 6) of the arduino
+        
+        Returns
+        -------
+        None
+        '''
         LED.write(1)
 
     def start_peristaltic_pump(self, p_pwm, p_on_off):
+        '''
+        Starts the peristaltic pump
+
+        Parameters
+        ----------
+        p_pwm object 
+            pin controller (pulse wide modulation pin 9) of the arduino
+        p_on_off:
+            pin controller (digital pin 2) of the arduino
+        
+        Returns
+        -------
+        None
+        '''
         p_pwm.write(0.7)
         p_on_off.write(0)
 
     def stop_peristaltic_pump(self, p_pwm, p_on_off):
+        '''
+        Starts the peristaltic pump
+
+        Parameters
+        ----------
+        p_pwm object 
+            pin controller (pulse wide modulation pin 9) of the arduino
+        p_on_off:
+            pin controller (digital pin 2) of the arduino
+        
+        Returns
+        -------
+        None
+        '''
+        
         p_pwm.write(0.7) 
         p_on_off.write(1)
+
+    def change_spped_peristaltic_pump(self, p_pwm, speed):
+        '''
+        Starts the peristaltic pump
+
+        Parameters
+        ----------
+        p_pwm object 
+            pin controller (pulse wide modulation pin 9) of the arduino
+        speed: float
+            float between 0 and 1 controlling the speed of the peristaltic pump
+        
+        Returns
+        -------
+        None
+        '''
+
+        p_pwm.write(speed)
+
+    def change_direction_of_peristaltic_pump(self, p_direction, direction):
+        '''
+        chenges the direction of the peristaltic pump
+
+        Parameters
+        ----------
+        p_direction: object 
+            pin controller (pulse wide modulation pin 3) of the arduino
+        direction: integer
+            integer controlling the pump direction 1 means counterclockwise, 0 clockwise
+        
+        Returns
+        -------
+        None
+        '''
+
+        p_direction.write(direction)
+        
+
+
+
+    def start_shim(self):
+        '''
+            Mehtod building the shim message to send as xml message to the Spinsolve TCP-endpoint
+
+            Parameters
+            ----------
+            None
+
+            Returns
+            -------
+            message: string
+                xml message as string containing the commands to run a shim sample protocol
+        '''
+        message  = "<Message>\r\n"
+        message += "   <Start protocol='SHIM 1H SAMPLE'>\r\n"
+        message += "     <Option name='SampleReference' value='4.74' />\r\n"
+        message += "     <Option name='Shim' value='QuickShim1' />\r\n"
+        message += "   </Start>\r\n"
+        message += "</Message>\r\n"
+
+        return message
+
+    def start_shim(self):
+        '''
+            Mehtod building the measurement message to send as xml message to the Spinsolve TCP-endpoint
+
+            Parameters
+            ----------
+            None
+
+            Returns
+            -------
+            message: string
+                xml message as string containing the commands to run measurement
+        '''
+        message  = "<Message>\r\n"
+        message +="<Start protocol='1D EXTENDED+'>\r\n"
+        message +="<Option name='Number' value='4' />\r\n"
+        message +="<Option name='AquisitionTime' value='3.2' />\r\n"
+        message +="<Option name='RepetitionTime' value='30' />\r\n"
+        message +="<Option name='PulseAngle' value='90' />\r\n"
+        message += "   </Start>\r\n"
+        message += "</Message>\r\n"
+
+        return message
+
+    def stop_flow_pumping_in(self, p_pwm, p_on_off, p_direction):
+        '''
+        Starts the sequence to pump the reactor content into the NMR measurement cell
+
+        Parameters
+        ----------
+        p_pwm:
+            pin controller (pulse wide modulation pin 9) of the arduino
+        p_on_off:
+            pin controller (digital pin 2) of the arduino
+        p_direction: object 
+            pin controller (pulse wide modulation pin 3) of the arduino
+
+        Returns
+        -------
+        None
+        '''
+        self.change_direction_of_peristaltic_pump(p_direction, 1)
+        self.start_peristaltic_pump(p_pwm, p_on_off)
+        time.sleep(25)
+        self.change_spped_peristaltic_pump(p_pwm, 0.65)
+        time.sleep(45)
+
+        
 
     def stop_flow_measurement(self, p_pwm, p_on_off, p_direction):
         p_on_off.write(1)

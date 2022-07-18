@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Message>
-  <StatusNotification timestamp="03:09:42">
+  <StatusNotification timestamp="01:09:40">
+    <Progress protocol="SHIM" percentage="60" />
     <Error protocol="1D EXTENDED+" error="Device is busy" />
   </StatusNotification>
 </Message>
