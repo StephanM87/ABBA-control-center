@@ -112,6 +112,23 @@ print(folders)
 '''
 
 
+df = pd.read_csv(r"assets\\111541-1D EXTENDED+-Unknown\\integrals.csv", delimiter=';')
+print(df.to_string())
+values = df["Value"]
+print(values)
+
+value_dict = {"substrate_1":"", "substrate_2":"", "substrate_3":""}
+
+for i in range(len(values)):
+
+    value_dict["substrate_"+str(i)] = values[i]
+
+print(value_dict)
+
+
+#measured_values = df["Value"]
+#print(measured_values)
+
 
 
 
