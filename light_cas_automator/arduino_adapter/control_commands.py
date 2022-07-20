@@ -111,7 +111,7 @@ class ControlCommands:
 
 
 
-    def start_shim(self):
+    def start_shimm(self):
         '''
             Mehtod building the shim message to send as xml message to the Spinsolve TCP-endpoint
 
@@ -133,6 +133,16 @@ class ControlCommands:
 
         return message
 
+
+    def check_quick_scan(self):
+        message = '<?xml version="1.0" encoding="UTF-8"?>'
+        message+='<Message>\r\n'
+        message += '<Start protocol="1D PROTON" >\r\n'
+        message += '<Option name="Scan" value="QuickScan" />\r\n'
+        message += '</Start>\r\n'
+        message += '</Message>\r\n'
+        return message
+
     def start_shim(self):
         '''
             Mehtod building the measurement message to send as xml message to the Spinsolve TCP-endpoint
@@ -148,14 +158,24 @@ class ControlCommands:
         '''
         message  = "<Message>\r\n"
         message +="<Start protocol='1D EXTENDED+'>\r\n"
-        message +="<Option name='Number' value='4' />\r\n"
-        message +="<Option name='AquisitionTime' value='3.2' />\r\n"
+        message +="<Option name='Number' value='1' />\r\n"
+        #message +="<Option name='AquisitionTime' value='3.2' />\r\n"
         message +="<Option name='RepetitionTime' value='30' />\r\n"
         message +="<Option name='PulseAngle' value='90' />\r\n"
         message += "   </Start>\r\n"
         message += "</Message>\r\n"
 
         return message
+
+    def check_protocols(self):
+
+        message = "<?xml version='1.0' encoding='utf-8'?>"
+        message += "<Message>"
+        message += "<AvailableProtocolOptionsRequest/>"
+        message += "</Message>"
+
+        return message
+
 
     def stop_flow_pumping_in(self, p_pwm, p_on_off, p_direction):
         '''
@@ -176,9 +196,10 @@ class ControlCommands:
         '''
         self.change_direction_of_peristaltic_pump(p_direction, 1)
         self.start_peristaltic_pump(p_pwm, p_on_off)
-        time.sleep(25)
+        time.sleep(5)
         self.change_spped_peristaltic_pump(p_pwm, 0.65)
-        time.sleep(45)
+        time.sleep(10)
+        self.stop_peristaltic_pump(p_pwm, p_on_off)
 
         
 

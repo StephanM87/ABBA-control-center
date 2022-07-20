@@ -48,7 +48,7 @@ class MeasurementExtractor:
         self.measurements_folder_path = measurements_folder_path
 
     def get_measurement_folder(self):
-        list_of_folders = glob.glob(path + "/*")
+        list_of_folders = glob.glob(self.measurements_folder_path + "/*")
         print(list_of_folders)
         latest_file = max(list_of_folders, key=os.path.getctime)
         print("die latest file is", latest_file)
@@ -111,7 +111,7 @@ folders = new.get_measurement_folder()
 print(folders)
 '''
 
-
+'''
 df = pd.read_csv(r"assets\\111541-1D EXTENDED+-Unknown\\integrals.csv", delimiter=';')
 print(df.to_string())
 values = df["Value"]
@@ -124,7 +124,7 @@ for i in range(len(values)):
     value_dict["substrate_"+str(i)] = values[i]
 
 print(value_dict)
-
+'''
 
 #measured_values = df["Value"]
 #print(measured_values)

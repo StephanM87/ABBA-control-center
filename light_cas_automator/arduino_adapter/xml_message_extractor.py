@@ -44,7 +44,7 @@ class XMLExtractor:
         '''
 
         for i in message.iter():
-            print(i.tag)
+            #print(i.tag)
             if i.tag == "Error":
                 error = i.attrib
                 self.status["status"] = "error"
@@ -71,14 +71,16 @@ class XMLExtractor:
         
         
         '''
-        response = ET.parse(self.root)
-        message = response.getroot()
-        self.status_setter(message)
+        response = ET.fromstring(self.root)
+        #message = response.getroot()
+        self.status_setter(response)
+        #print("return status")
+        #print("das response objekt ist", self.status)
         return self.status
 
     
 
-new = XMLExtractor("assets\cml_test_intermediate.xml").check_if_error_or_status()
+#new = XMLExtractor("assets\cml_test_intermediate.xml").check_if_error_or_status()
 
 
-print(new)
+#print(new)
