@@ -13,6 +13,30 @@ import xml.etree.ElementTree as ET
 
 namespace = Namespace("api/nmr", description="Route whicht creates Enzymeml documents and returns them in form of omex archives")
 
+@namespace.route("/test")
+class PumpControl(Resource):
+    @namespace.doc()
+    def get(self):
+        HOST = "127.0.0.1"  # Replace
+        PORT = 13000 #Default port
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((HOST, PORT))
+        message = '<?xml version="1.0" encoding="UTF-8"?>'
+        message+='<Message>\r\n'
+        message += '<Start protocol="1D PROTON" >\r\n'
+        message += '<Option name="Scan" value="QuickScan" />\r\n'
+        message += '</Start>\r\n'
+        message += '</Message>\r\n'
+        s.send(message.encode())
+        print('\r\nMessage received:')
+        s.settimeout(10.0)
+        while True:
+                time.sleep(0.2)
+                chunk = s.recv(8192) 
+                print(chunk)           
+    
+
+
 @namespace.route("/start")
 class PumpControl(Resource):
     @namespace.doc()

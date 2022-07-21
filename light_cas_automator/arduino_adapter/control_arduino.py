@@ -10,6 +10,8 @@ import socket
 from light_cas_automator.arduino_adapter.control_commands import ControlCommands
 from light_cas_automator.extract_measurement_data.extract_measurement_data import MeasurementExtractor
 from light_cas_automator.arduino_adapter.xml_message_extractor import XMLExtractor
+from light_cas_automator.arduino_adapter.spinsolve_message_reader import SpinsolveMessageReader
+from light_cas_automator.arduino_adapter.socket_starter import SocketStarter
 
 
 #from light_cas_automator.arduino_adapter.control_panel import ControlPanel
@@ -150,10 +152,10 @@ class AutomatedProcess(Resource):
 
         # Pump the reactor content into the NMR
         ot_control = ControlCommands()
-        ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
-
+        #ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
+        
         # Shim the reaction sample
-
+        '''
         shim_session = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         shim_session.connect((HOST, PORT))
         shim_command = ot_control.start_shimm()
@@ -177,34 +179,117 @@ class AutomatedProcess(Resource):
                         if shim_status["message"] == "100":
                             shim_session.close()
                             shim_condition = False
+        '''
         test_condition = True
-        
         while test_condition:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Check status
+            s_1d = SocketStarter(HOST,PORT, 10).start_check_quick_scan()
+            print("*****************Check Status Method***************")
+            '''
             s.connect((HOST, PORT))
-            xml_command = ot_control.start_shim()
+            xml_command = ot_control.check_quick_scan()
             s.send(xml_command.encode())
             s.settimeout(10.0)
-            time.sleep(0.2)
-            chunk = s.recv(8192)
-            print(chunk)
-            test_read = XMLExtractor(chunk)
-            payload_test = test_read.check_if_error_or_status()
-            if payload_test["status"] == "error":
-                if payload_test["message"] != "Device is busy":
-                    test_condition = False
-                    print("Unknown Error detected in test phase")
-                elif payload_test["message"] == "Device is busy":
-                    print("Beschäftigt!")
-                    s.close()
-                    time.sleep(30)   
-            elif payload_test["status"] == "progress":
-                test_condition = False
-                print("die messare ist",payload_test["message"])
-                print("it is working")
-        conditio = True
+            '''
+            print("*****************Start the Test Method*******************")
+            measurement_ongoing = True
 
+            while measurement_ongoing:
+                print("s_neu ist im while loop: ", s_1d)
+                #time.sleep(0.1)
+                chunk = s_1d.recv(8129) 
+                payload_stat = SpinsolveMessageReader(s_1d, chunk, "quickscan")
+                #payload_status = payload_stat.readout_message()
+                messages = payload_stat.define_cases()
+                print(messages)
+                if messages["status"] == "progress":
+                    if messages["message"] != "finished":
+                        print("measurement is at: ", messages["message"], " %")
+                    elif messages["message"] == "finished":
+                        print("process has finised HAHAHAHAH")
+                        time.sleep(5)
+                        s_1d.close()
+                        measurement_ongoing = False
+                        test_condition = False
+                if messages["status"] == "error":
+                    if messages["message"] == "busy":
+                        print("device is still busy")
+                        time.sleep(15)
+                        s_1d.close()
+                        measurement_ongoing = False
+
+
+            '''
+
+                if payload_status["status"] == "error":
+                    if payload_status["message"] == "Device is busy":
+                        print("Beschäftigt!")
+                        measurement_ongoing = False
+                        s_neu.close()
+                        time.sleep(30)
+                    elif payload_status["message"] != "Device is busy":
+                        #test_condition = False
+                        print("Unknown Error detected in test phase")
+                        time.sleep(40)
+                    test_condition = False
+                elif payload_status["status"] == "progress":
+                    test_condition = False
+                    print("die messare ist",payload_status["message"])
+                    print("it is working")
+                    if payload_status["message"] == '80':
+                        print("final measurement has been done")
+                        s_neu.close()
+                        measurement_ongoing = False
+                    if payload_status["message"] != '100':
+                        print("new measurement")
+
+                    
+            
+            
+            #time.sleep(0.2)
+            #chunk = s.recv(8192)
+            #print(chunk)
+            #test_read = XMLExtractor(chunk)
+            #payload_test = test_read.check_if_error_or_status()
+            
+
+        '''         
+            
+        conditio = True
         while conditio:
+                s_neu = SocketStarter(HOST,PORT, 10).start_1DExtended()
+                chunk = s_neu.recv(8129) 
+                measurement_1D_ongoing = True
+                print("*****************Start the 1Extended Method*******************")
+                while measurement_1D_ongoing:
+ 
+                    #time.sleep(0.1)
+                    chunk = s_neu.recv(8129) 
+                    payload_stat = SpinsolveMessageReader(s_neu, chunk, "1DExtended")
+                    #payload_status = payload_stat.readout_message()
+                    messages = payload_stat.define_cases()
+                    print(messages)
+                    if messages["status"] == "progress":
+                        if messages["message"] != "finished":
+                            print("measurement is at: ", messages["message"], " %")
+                        elif messages["message"] == "finished":
+                            print("process has finised HAHAHAHAH")
+                            time.sleep(5)
+                            s_neu.close()
+                            measurement_1D_ongoing = False
+                            conditio = False
+                    if messages["status"] == "error":
+                        if messages["message"] == "busy":
+                            print("device is still busy")
+                            time.sleep(15)
+                            s_neu.close()
+                            measurement_1D_ongoing = False
+        '''
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.connect((HOST, PORT))
+                xml_command = ot_control.start_shim()
+                s.send(xml_command.encode())
+                s.settimeout(10.0)
                 time.sleep(0.2)
                 print("der socket ist", type(s))
                 chunk = s.recv(8192)
@@ -218,6 +303,7 @@ class AutomatedProcess(Resource):
                         conditio = False
                         s.close()
                 elif payload["status"] == "progress":
+                    time.sleep(30)
                     print("the shim percentage is at " + str(payload["message"]) + " %")
                     if payload["message"] == "100":
                         s.close()
@@ -227,4 +313,4 @@ class AutomatedProcess(Resource):
                         measurement.get_measurement_folder()
                     else:
                         pass
-                    
+        '''            
