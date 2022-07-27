@@ -13,6 +13,7 @@ from light_cas_automator.arduino_adapter.xml_message_extractor import XMLExtract
 from light_cas_automator.arduino_adapter.spinsolve_message_reader import SpinsolveMessageReader
 from light_cas_automator.arduino_adapter.socket_starter import SocketStarter
 from light_cas_automator.arduino_adapter.control_panel import ControlPanel
+from light_cas_automator.arduino_adapter.measurement_controller import MeasurementController
 
 #from light_cas_automator.arduino_adapter.control_panel import ControlPanel
 HOST = "127.0.0.1"  # Replace
@@ -319,7 +320,23 @@ class AutomatedProcess(Resource):
 class AutomatedProcess(Resource):
     @namespace.doc()
 
+
+
+
     def get(self):
+
+        measurement = MeasurementController(HOST,PORT)
+        measurement.start_quickscan()
+
+        measurement.sample_shim()
+        measurement.start_quickscan()
+        measurement.measure_id_extended()
+
+
+
+
+
+        '''
         print("lets go")
         test_condition = True
         while test_condition:
@@ -373,5 +390,6 @@ class AutomatedProcess(Resource):
                 measurement_payload = ControlPanel(s_shim, "sample_shim").get_status()
                 measurement_condition = measurement_payload["measurement"]
                 sample_condition = measurement_payload["command"]
+        '''
 
 
