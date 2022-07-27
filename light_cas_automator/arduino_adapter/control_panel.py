@@ -1,24 +1,50 @@
+import time
+
 
 from light_cas_automator.arduino_adapter.spinsolve_message_reader import SpinsolveMessageReader
 
 class ControlPanel:
     
-    def check_measurement(self):
+    def __init__(self, socket, command):
+        self.socket = socket
+        self.command = command
+        self.loop_status = {"command":"", "measurement":""}
 
-        def __init__(self, socket, command):
-            self.socket = socket
-            self.command = command
+    def update_loop_status_dict(self, command, measurement):
 
-        def get_messages(self):
-            chunk = self.socket.recv(8129)
-            payload_stat = SpinsolveMessageReader(self.socket, chunk, self.command)
-            messages = payload_stat.define_cases()
-            return messages
+        self.loop_status["command"] = command
+        self.loop_status["measurement"] = measurement
 
-        def get_status(self):
+    def get_messages(self):
+        chunk = self.socket.recv(8129)
+        print("ch8nk ist", chunk)
+        payload_stat = SpinsolveMessageReader(self.socket, chunk, self.command)
+        messages = payload_stat.define_cases()
+        return messages
 
-            messages = self.get_messages()
-            
+    def get_status(self):
+
+        messages = self.get_messages()
+        print(messages)
+        if messages["status"] == "progress":
+            if messages["message"] != "finished":
+                print("measurement is at: ", messages["message"], " %")
+                self.update_loop_status_dict(True, True)
+                return self.loop_status
+            elif messages["message"] == "finished":
+                print("process has finised HAHAHAHAH")
+                time.sleep(5)
+                self.socket.close()
+                self.update_loop_status_dict(False, False)
+                return self.loop_status
+        if messages["status"] == "error":
+            if messages["message"] == "busy":
+                print("device is still busy")
+                time.sleep(15)
+                self.socket.close()
+                self.update_loop_status_dict(True, False)
+                return self.loop_status
+        
 
 
 

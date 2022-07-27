@@ -29,6 +29,8 @@ class SpinsolveMessageReader:
         if message["status"] == "error":
             if message["message"] =="Device is busy":
                 return {"status":"error","message":"busy"}
+            elif message["message"] != "Device is busy":
+                return {"status":"progress","message":"temoerature"}
         
         elif message["status"] == "progress":
             if self.method == "quickscan":

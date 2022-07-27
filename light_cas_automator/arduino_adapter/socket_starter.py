@@ -26,3 +26,12 @@ class SocketStarter:
         s.send(xml_command.encode())
         s.settimeout(10.0)
         return s
+
+    def start_shim(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        ot_control = ControlCommands()
+        s.connect((self.HOST, self.PORT))
+        xml_command = ot_control.start_shimm()
+        s.send(xml_command.encode())
+        s.settimeout(10.0)
+        return s

@@ -12,7 +12,7 @@ from light_cas_automator.extract_measurement_data.extract_measurement_data impor
 from light_cas_automator.arduino_adapter.xml_message_extractor import XMLExtractor
 from light_cas_automator.arduino_adapter.spinsolve_message_reader import SpinsolveMessageReader
 from light_cas_automator.arduino_adapter.socket_starter import SocketStarter
-
+from light_cas_automator.arduino_adapter.control_panel import ControlPanel
 
 #from light_cas_automator.arduino_adapter.control_panel import ControlPanel
 HOST = "127.0.0.1"  # Replace
@@ -314,3 +314,64 @@ class AutomatedProcess(Resource):
                     else:
                         pass
         '''            
+
+@namespace.route("/test_automated_system")
+class AutomatedProcess(Resource):
+    @namespace.doc()
+
+    def get(self):
+        print("lets go")
+        test_condition = True
+        while test_condition:
+        # Check status
+            s_1d = SocketStarter(HOST,PORT, 10).start_check_quick_scan()
+            payload = ControlPanel(s_1d, "quickscan").get_status()
+            measurement_condition = payload["measurement"]
+
+            while measurement_condition:
+                
+                measurement_payload = ControlPanel(s_1d, "quickscan").get_status()
+                measurement_condition = measurement_payload["measurement"]
+                test_condition = measurement_payload["command"]
+                print("test_condition", test_condition)
+
+        shim_condition = True
+        while shim_condition:
+        # Check status
+            s_shim = SocketStarter(HOST,PORT, 10).start_shim()
+            payload = ControlPanel(s_shim, "sample_shim").get_status()
+            measurement_condition = payload["measurement"]
+
+            while measurement_condition:
+                
+                measurement_payload = ControlPanel(s_shim, "sample_shim").get_status()
+                measurement_condition = measurement_payload["measurement"]
+                shim_condition = measurement_payload["command"]
+
+        while test_condition:
+        # Check status
+            s_1d = SocketStarter(HOST,PORT, 10).start_check_quick_scan()
+            payload = ControlPanel(s_1d, "quickscan").get_status()
+            measurement_condition = payload["measurement"]
+
+            while measurement_condition:
+                
+                measurement_payload = ControlPanel(s_1d, "quickscan").get_status()
+                measurement_condition = measurement_payload["measurement"]
+                test_condition = measurement_payload["command"]
+                print("test_condition", test_condition)
+
+        sample_condition = True
+        while sample_condition:
+        # Check status
+            s_shim = SocketStarter(HOST,PORT, 10).start_1DExtended()
+            payload = ControlPanel(s_shim, "sample_shim").get_status()
+            measurement_condition = payload["measurement"]
+
+            while measurement_condition:
+                
+                measurement_payload = ControlPanel(s_shim, "sample_shim").get_status()
+                measurement_condition = measurement_payload["measurement"]
+                sample_condition = measurement_payload["command"]
+
+
