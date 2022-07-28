@@ -324,6 +324,7 @@ class AutomatedProcess(Resource):
 
 
     def get(self):
+        print("lets go!!!")
 
         measurement = MeasurementController(HOST,PORT)
         measurement.start_quickscan()

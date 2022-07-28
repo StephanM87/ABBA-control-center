@@ -137,6 +137,13 @@ class ControlCommands:
     def check_quick_scan(self):
         message = '<?xml version="1.0" encoding="UTF-8"?>'
         message+='<Message>\r\n'
+        #message+= '<Set>\r\n'
+        #message+= '<DataFolder>\r\n'
+        #message+= '<UserFolder>\r\n'
+        #message+= 'c:/PROJECTS/DATA/Waste'
+        #message+= '</UserFolder>\r\n'
+        #message+= '</DataFolder>\r\n'
+        #message+= '</Set>\r\n'
         message += '<Start protocol="1D PROTON" >\r\n'
         message += '<Option name="Scan" value="QuickScan" />\r\n'
         message += '</Start>\r\n'
