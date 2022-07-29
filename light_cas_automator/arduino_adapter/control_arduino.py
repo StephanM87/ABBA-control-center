@@ -14,6 +14,8 @@ from light_cas_automator.arduino_adapter.spinsolve_message_reader import Spinsol
 from light_cas_automator.arduino_adapter.socket_starter import SocketStarter
 from light_cas_automator.arduino_adapter.control_panel import ControlPanel
 from light_cas_automator.arduino_adapter.measurement_controller import MeasurementController
+from light_cas_automator.extract_measurement_data.extract_measurement_data import MeasurementExtractor
+
 
 #from light_cas_automator.arduino_adapter.control_panel import ControlPanel
 HOST = "127.0.0.1"  # Replace
@@ -332,6 +334,9 @@ class AutomatedProcess(Resource):
         measurement.sample_shim()
         measurement.start_quickscan()
         measurement.measure_id_extended()
+        data = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":2},{"name":"butanal", "protons":2}], 3)
+        data.calculate_concentrations()
+
 
 
 
