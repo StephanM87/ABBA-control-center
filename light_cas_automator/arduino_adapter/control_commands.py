@@ -203,14 +203,14 @@ class ControlCommands:
         '''
         self.change_direction_of_peristaltic_pump(p_direction, 1)
         self.start_peristaltic_pump(p_pwm, p_on_off)
-        time.sleep(5)
+        time.sleep(15)
         self.change_spped_peristaltic_pump(p_pwm, 0.65)
-        time.sleep(10)
+        time.sleep(40)
         self.stop_peristaltic_pump(p_pwm, p_on_off)
 
     def stop_flow_pumping_out(self, p_pwm, p_on_off, p_direction):
-        '''
-        Starts the sequence to pump the reactor content into the NMR measurement cell
+        '''NMR
+        Starts the sequence to pump the content in the NMR cell to the reactor
 
         Parameters
         ----------
@@ -227,9 +227,9 @@ class ControlCommands:
         '''
         self.change_direction_of_peristaltic_pump(p_direction, 0)
         self.start_peristaltic_pump(p_pwm, p_on_off)
-        time.sleep(5)
+        time.sleep(15)
         self.change_spped_peristaltic_pump(p_pwm, 0.65)
-        time.sleep(10)
+        time.sleep(40)
         self.stop_peristaltic_pump(p_pwm, p_on_off)
 
         

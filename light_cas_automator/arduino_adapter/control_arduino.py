@@ -81,6 +81,7 @@ class PumpControl(Resource):
         print("kack ab du kackvogel")
         ot_control = ControlCommands()
         ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
+        ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
 
         return "Pumpe aus"
 
