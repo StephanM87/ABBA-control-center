@@ -337,6 +337,7 @@ class AutomatedProcess(Resource):
         measurement.measure_id_extended()
         data = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":2},{"name":"butanal", "protons":2}], 3)
         data.calculate_concentrations()
+        ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
 
 
 
