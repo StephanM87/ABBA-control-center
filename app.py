@@ -40,7 +40,6 @@ def create_app():
     api = Api(app)
     api.add_namespace(pump_control)
     api.add_namespace(nmr_control)
-    #api.add_namespace(zenodo_ns)
     config = Configurations.get_configuarations()
     CORS(app, resources=config["CORS"])
     return app
