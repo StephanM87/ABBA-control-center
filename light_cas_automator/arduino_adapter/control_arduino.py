@@ -29,21 +29,13 @@ try:
     p_on_off = board.get_pin("d:2:o")
     p_direction = board.get_pin('d:3:o')
     LED = board.get_pin('d:6:o')
-
-    #LED.write(1)
-    #time.sleep(10)
-    #LED.write(0)
-    print("disconnect")
-    #board.exit()
-
-    print("halo")
     print("the board is:", board)
 except Exception as err:
     print(err)
     #raise
 
 
-namespace = Namespace("api/ot", description="Route whicht creates Enzymeml documents and returns them in form of omex archives")
+namespace = Namespace("api/ot", description="")
 
 @namespace.route("/light_up")
 class PumpControl(Resource):
@@ -80,6 +72,16 @@ class PumpControl(Resource):
     def get(self):
         p_pwm.write(0.7) 
         p_on_off.write(1)
+        return "Pumpe aus"
+
+@namespace.route("/test_pump")
+class PumpControl(Resource):
+    @namespace.doc()
+    def get(self):
+        print("kack ab du kackvogel")
+        ot_control = ControlCommands()
+        ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
+
         return "Pumpe aus"
 
 
@@ -321,12 +323,10 @@ class AutomatedProcess(Resource):
 @namespace.route("/test_automated_system")
 class AutomatedProcess(Resource):
     @namespace.doc()
-
-
-
-
     def get(self):
         print("lets go!!!")
+        ot_control = ControlCommands()
+        ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
 
         measurement = MeasurementController(HOST,PORT)
         measurement.start_quickscan()
