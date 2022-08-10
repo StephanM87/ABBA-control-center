@@ -12,14 +12,15 @@ class OTControlDecisions:
     
     def get_phase_and_boudaries(self, reaction_phase):
         
-        key = self.boundaries[reaction_phase]
-        print(key)
+        compare_value = self.boundaries[reaction_phase]
+        print(compare_value)
         try:
-            value = self.concentrations[key]
+            value = self.concentrations[reaction_phase]
+            print("value is", value, "compare value is", compare_value)
         except Exception as err:
             print("error in ot control", err)
 
-        print("the concentration to target is:", value)
+        print("the concentration to target is:", compare_value)
         
 
 
