@@ -1,4 +1,4 @@
-
+import time
 
 
 class OTControlDecisions:
@@ -17,10 +17,16 @@ class OTControlDecisions:
         try:
             value = self.concentrations[reaction_phase]
             print("value is", value, "compare value is", compare_value)
+            if value < compare_value:
+                self.LED.write(1)
+                time.sleep(20)
+                self.LED.write(0)
+
         except Exception as err:
             print("error in ot control", err)
 
         print("the concentration to target is:", compare_value)
+
         
 
 
