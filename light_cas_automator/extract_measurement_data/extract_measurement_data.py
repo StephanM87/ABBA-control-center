@@ -57,7 +57,7 @@ class MeasurementExtractor:
         for i in range(len(self.structures)):
             entry = integrals[i]
             entry_dot = entry.replace(",", ".")
-            print("die zahl ist", entry_dot)
+            #print("die zahl ist", entry_dot)
             key_dict_name = self.structures[i]["name"]
 
             payload_slice = self.payload[key_dict_name]
@@ -94,7 +94,7 @@ class MeasurementExtractor:
         self.extract_integrals()
 
         payload_keys = list(self.payload.keys())
-        print(payload_keys)
+        #print(payload_keys)
         del payload_keys[0]
 
         Is = self.payload["reference"]["value"]
@@ -106,7 +106,8 @@ class MeasurementExtractor:
             Na = self.payload[i]["protons"]
             concentration = self.fomula_concentration(Ia, Is, Cs, Ns, Na)
             self.payload[i]["concentration"] = concentration
-            print(self.payload)
+            #print(self.payload)
+        return self.payload
         
 
 #new = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":2},{"name":"butanal", "protons":2}], 3)

@@ -71,12 +71,18 @@ class XMLExtractor:
         
         
         '''
-        response = ET.fromstring(self.root)
-        #message = response.getroot()
-        self.status_setter(response)
-        #print("return status")
-        #print("das response objekt ist", self.status)
-        return self.status
+        try:
+            response = ET.fromstring(self.root)
+            #message = response.getroot()
+            self.status_setter(response)
+            #print("return status")
+            #print("das response objekt ist", self.status)
+            return self.status
+        except Exception as e:
+            print("error")
+            print(self.root)
+            print(e)
+            raise
 
     
 

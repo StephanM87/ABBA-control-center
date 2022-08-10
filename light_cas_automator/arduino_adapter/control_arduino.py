@@ -15,6 +15,7 @@ from light_cas_automator.arduino_adapter.socket_starter import SocketStarter
 from light_cas_automator.arduino_adapter.control_panel import ControlPanel
 from light_cas_automator.arduino_adapter.measurement_controller import MeasurementController
 from light_cas_automator.extract_measurement_data.extract_measurement_data import MeasurementExtractor
+from light_cas_automator.arduino_adapter.ot_control_decisions import OTControlDecisions
 
 
 #from light_cas_automator.arduino_adapter.control_panel import ControlPanel
@@ -336,8 +337,13 @@ class AutomatedProcess(Resource):
         measurement.start_quickscan()
         measurement.measure_id_extended()
         data = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":2},{"name":"butanal", "protons":2}], 3)
-        data.calculate_concentrations()
+        concentrations = data.calculate_concentrations()
+        print(concentrations)
         ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
+        
+        #action = OTControlDecisions(p_pwm, p_on_off, p_direction, LED,  )
+
+        
 
 
 
