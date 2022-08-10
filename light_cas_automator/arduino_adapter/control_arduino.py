@@ -168,8 +168,11 @@ class AutomatedProcess(Resource):
         concentrations = data.calculate_concentrations()
         print(concentrations)
         ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
+
+        boundaries = {"butanal":3}
         
-        action = OTControlDecisions(p_pwm, p_on_off, p_direction, LED,  )
+        action = OTControlDecisions(p_pwm, p_on_off, p_direction, LED, concentrations, boundaries)
+        action.get_phase_and_boudaries("butanal")
 
         
 
