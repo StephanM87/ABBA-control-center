@@ -85,8 +85,11 @@ class MeasurementExtractor:
     def fomula_concentration(self, Ia, Is, Cs, Ns, Na):
 
         signals = Ia/Is
+        print("Signal quotient is", signals)
         protons = Ns/Na
+        print("proton quotient", protons)
         concentration_analyte = signals*protons*Cs
+        print("concentration analyte is", concentration_analyte)
         return concentration_analyte
     
     def calculate_concentrations(self):

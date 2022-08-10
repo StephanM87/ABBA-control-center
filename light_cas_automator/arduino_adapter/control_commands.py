@@ -143,7 +143,7 @@ class ControlCommands:
         #message+= 'c:/PROJECTS/DATA/Waste'
         #message+= '</UserFolder>\r\n'
         #message+= '</DataFolder>\r\n'
-        #message+= '</Set>\r\n'
+        #message+= '</Set>\rn'\
         message += '<Start protocol="1D PROTON" >\r\n'
         message += '<Option name="Scan" value="QuickScan" />\r\n'
         message += '</Start>\r\n'
