@@ -31,6 +31,7 @@ try:
     p_direction = board.get_pin('d:3:o')
     LED = board.get_pin('d:6:o')
     print("the board is:", board)
+    p_on_off.write(1)
 except Exception as err:
     print(err)
     #raise
