@@ -15,7 +15,7 @@ class OTControlDecisions:
         compare_value = self.boundaries[reaction_phase]
         print(compare_value)
         try:
-            value = self.concentrations[reaction_phase]
+            value = self.concentrations[reaction_phase]["concentration"]
             print("value is", value, "compare value is", compare_value)
             if value < compare_value:
                 self.LED.write(1)
