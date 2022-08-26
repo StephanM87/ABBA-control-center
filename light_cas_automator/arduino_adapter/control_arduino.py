@@ -16,6 +16,7 @@ from light_cas_automator.arduino_adapter.control_panel import ControlPanel
 from light_cas_automator.arduino_adapter.measurement_controller import MeasurementController
 from light_cas_automator.extract_measurement_data.extract_measurement_data import MeasurementExtractor
 from light_cas_automator.arduino_adapter.ot_control_decisions import OTControlDecisions
+from light_cas_automator.arduino_adapter.control_panel_arduino_2 import Controller2
 
 
 #from light_cas_automator.arduino_adapter.control_panel import ControlPanel
@@ -64,7 +65,7 @@ class PumpControl(Resource):
 class PumpControl(Resource):
     @namespace.doc()
     def get(self):
-        p_pwm.write(0.7)
+        p_pwm.write(0.1)
         p_on_off.write(0)
         return "Pumpe läuft"
 
@@ -86,6 +87,18 @@ class PumpControl(Resource):
         ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
 
         return "Pumpe aus"
+@namespace.route("/start_pump_2")
+class Pump2Starter(Resource):
+    def get(self):
+        controller2 = Controller2()
+        controller2.start_pump_2()
+        return("pump läuft")
+@namespace.route("/stop_pump_2")
+class Pump2Starter(Resource):
+    def get(self):
+        controller2 = Controller2()
+        controller2.stop_pump_2()
+        return("pump läuft nicht")
 
 
 @namespace.route("/stop_flow")
@@ -164,8 +177,12 @@ class AutomatedProcess(Resource):
         measurement.sample_shim()
         measurement.start_quickscan()
         measurement.measure_id_extended()
-        data = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":9},{"name":"butanal", "protons":1}], 5)
-        concentrations = data.calculate_concentrations()
+        try:
+
+            data = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":9},{"name":"butanal", "protons":1}], 5)
+            concentrations = data.calculate_concentrations()
+        except Exception as err:
+            concentrations = "not there"
         print(concentrations)
         ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
 
@@ -173,6 +190,8 @@ class AutomatedProcess(Resource):
         
         action = OTControlDecisions(p_pwm, p_on_off, p_direction, LED, concentrations, boundaries)
         action.get_phase_and_boudaries("butanal")
+
+        return concentrations
 
         
 
