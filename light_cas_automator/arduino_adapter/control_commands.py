@@ -165,7 +165,7 @@ class ControlCommands:
         '''
         message  = "<Message>\r\n"
         message +="<Start protocol='1D EXTENDED+'>\r\n"
-        message +="<Option name='Number' value='4' />\r\n"
+        message +="<Option name='Number' value='16' />\r\n"
         #message +="<Option name='AquisitionTime' value='3.2' />\r\n"
         message +="<Option name='RepetitionTime' value='30' />\r\n"
         message +="<Option name='PulseAngle' value='90' />\r\n"

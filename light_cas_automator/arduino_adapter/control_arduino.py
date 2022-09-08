@@ -1,5 +1,6 @@
 import io
-from flask import Flask
+import urllib
+from flask import Flask, request
 from flask_restx import Namespace, Resource, Api, fields, abort
 from werkzeug.exceptions import BadRequest, HTTPException
 import os
@@ -101,6 +102,25 @@ class Pump2Starter(Resource):
         return("pump läuft nicht")
 
 
+@namespace.route("/measure")
+class Pump2Starter(Resource):
+    def get(self):
+        measurement = MeasurementController(HOST,PORT)
+        measurement.start_quickscan()
+
+        measurement.sample_shim()
+        measurement.start_quickscan()
+        measurement.measure_id_extended()
+        try:
+
+            data = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":9},{"name":"butanal", "protons":1}, {"name":"PAC", "protons":3}], 5)
+            concentrations = data.calculate_concentrations()
+        except Exception as err:
+            print("die exception ist",err)
+            print("ERRRRRRRRROR")
+            concentrations = "not there"
+        return concentrations
+
 @namespace.route("/stop_flow")
 class PumpControl(Resource):
     @namespace.doc()
@@ -168,92 +188,63 @@ class AutomatedProcess(Resource):
     @namespace.doc()
     def get(self):
         print("lets go!!!")
-        ot_control = ControlCommands()
-        ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
+        #ot_control = ControlCommands()
+        #ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
 
-        measurement = MeasurementController(HOST,PORT)
-        measurement.start_quickscan()
+        #measurement = MeasurementController(HOST,PORT)
+        #measurement.start_quickscan()
 
-        measurement.sample_shim()
-        measurement.start_quickscan()
-        measurement.measure_id_extended()
+        #measurement.sample_shim()
+        #measurement.start_quickscan()
+        #measurement.measure_id_extended()
+        
         try:
 
-            data = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":9},{"name":"butanal", "protons":1}], 5)
+            data = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":9},{"name":"butanal", "protons":1}, {"name":"PAC", "protons":3}], 5)
             concentrations = data.calculate_concentrations()
         except Exception as err:
+            print("die exception ist",err)
+            print("ERRRRRRRRROR")
             concentrations = "not there"
-        print(concentrations)
-        ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
+
+        time.sleep(10)
+        
+        #print(concentrations)
+        #ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
 
         boundaries = {"butanal":3}
         
-        action = OTControlDecisions(p_pwm, p_on_off, p_direction, LED, concentrations, boundaries)
-        action.get_phase_and_boudaries("butanal")
+        #action = OTControlDecisions(p_pwm, p_on_off, p_direction, LED, concentrations, boundaries)
+        #action.get_phase_and_boudaries("butanal")
 
         return concentrations
 
+@namespace.route("/inactivate")
+class AutomatedProcess(Resource):
+    @namespace.doc()
+    def get(self):
+        command = ControlCommands()
+        command.start_LED(LED)
+        time.sleep(20)
+        command.stop_LED()
+    
+        return "inactivation done"
+
+@namespace.route("/reaction2")
+class AutomatedProcess(Resource):
+    @namespace.doc()
+    def post(self):
+        data = request.get_json()
+        print(data[""])
+        print(data)
+        controller2 = Controller2()
+        controller2.start_pump_2()
+        time.sleep(10)
+        controller2.stop_pump_2()
         
+        time.sleep(10)
+    
+        return "successful added enzyme"
 
-
-
-
-
-
-        '''
-        print("lets go")
-        test_condition = True
-        while test_condition:
-        # Check status
-            s_1d = SocketStarter(HOST,PORT, 10).start_check_quick_scan()
-            payload = ControlPanel(s_1d, "quickscan").get_status()
-            measurement_condition = payload["measurement"]
-
-            while measurement_condition:
-                
-                measurement_payload = ControlPanel(s_1d, "quickscan").get_status()
-                measurement_condition = measurement_payload["measurement"]
-                test_condition = measurement_payload["command"]
-                print("test_condition", test_condition)
-
-        shim_condition = True
-        while shim_condition:
-        # Check status
-            s_shim = SocketStarter(HOST,PORT, 10).start_shim()
-            payload = ControlPanel(s_shim, "sample_shim").get_status()
-            measurement_condition = payload["measurement"]
-
-            while measurement_condition:
-                
-                measurement_payload = ControlPanel(s_shim, "sample_shim").get_status()
-                measurement_condition = measurement_payload["measurement"]
-                shim_condition = measurement_payload["command"]
-
-        while test_condition:
-        # Check status
-            s_1d = SocketStarter(HOST,PORT, 10).start_check_quick_scan()
-            payload = ControlPanel(s_1d, "quickscan").get_status()
-            measurement_condition = payload["measurement"]
-
-            while measurement_condition:
-                
-                measurement_payload = ControlPanel(s_1d, "quickscan").get_status()
-                measurement_condition = measurement_payload["measurement"]
-                test_condition = measurement_payload["command"]
-                print("test_condition", test_condition)
-
-        sample_condition = True
-        while sample_condition:
-        # Check status
-            s_shim = SocketStarter(HOST,PORT, 10).start_1DExtended()
-            payload = ControlPanel(s_shim, "sample_shim").get_status()
-            measurement_condition = payload["measurement"]
-
-            while measurement_condition:
-                
-                measurement_payload = ControlPanel(s_shim, "sample_shim").get_status()
-                measurement_condition = measurement_payload["measurement"]
-                sample_condition = measurement_payload["command"]
-        '''
 
 
