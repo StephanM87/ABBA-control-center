@@ -101,6 +101,19 @@ class Pump2Starter(Resource):
         controller2.stop_pump_2()
         return("pump läuft nicht")
 
+@namespace.route("/start_pump_3")
+class Pump2Starter(Resource):
+    def get(self):
+        controller2 = Controller2()
+        controller2.start_pump_3()
+        return("pump läuft")
+@namespace.route("/stop_pump_3")
+class Pump2Starter(Resource):
+    def get(self):
+        controller2 = Controller2()
+        controller2.stop_pump_3()
+        return("pump läuft nicht")
+
 
 @namespace.route("/measure")
 class Pump2Starter(Resource):
@@ -188,15 +201,15 @@ class AutomatedProcess(Resource):
     @namespace.doc()
     def get(self):
         print("lets go!!!")
-        #ot_control = ControlCommands()
-        #ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
+        ot_control = ControlCommands()
+        ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
 
-        #measurement = MeasurementController(HOST,PORT)
-        #measurement.start_quickscan()
+        measurement = MeasurementController(HOST,PORT)
+        measurement.start_quickscan()
 
-        #measurement.sample_shim()
-        #measurement.start_quickscan()
-        #measurement.measure_id_extended()
+        measurement.sample_shim()
+        measurement.start_quickscan()
+        measurement.measure_id_extended()
         
         try:
 
@@ -225,7 +238,7 @@ class AutomatedProcess(Resource):
     def get(self):
         command = ControlCommands()
         command.start_LED(LED)
-        time.sleep(20)
+        time.sleep(1800)
         command.stop_LED()
     
         return "inactivation done"
@@ -237,10 +250,12 @@ class AutomatedProcess(Resource):
         data = request.get_json()
         print(data[""])
         print(data)
-        controller2 = Controller2()
-        controller2.start_pump_2()
-        time.sleep(10)
-        controller2.stop_pump_2()
+        pump2 = float(data["pump2"])
+        pump3 = float(data["pump3"])
+        #controller2 = Controller2()
+        #controller2.start_pump_2()
+        #time.sleep(10)
+        #controller2.stop_pump_2()
         
         time.sleep(10)
     
