@@ -239,7 +239,7 @@ class AutomatedProcess(Resource):
         command = ControlCommands()
         command.start_LED(LED)
         time.sleep(1800)
-        command.stop_LED()
+        command.stop_LED(LED)
     
         return "inactivation done"
 
