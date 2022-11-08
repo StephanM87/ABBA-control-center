@@ -223,7 +223,7 @@ class AutomatedProcess(Resource):
         time.sleep(10)
         
         #print(concentrations)
-        #ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
+        ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
 
         boundaries = {"butanal":3}
         
