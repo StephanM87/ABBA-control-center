@@ -47,6 +47,7 @@ class MeasurementController:
         while sample_condition:
         # Check status
             s_shim = SocketStarter(self.HOST,self.PORT, 10).start_1DExtended()
+            
             payload = ControlPanel(s_shim, "sample_shim").get_status()
             measurement_condition = payload["measurement"]
 

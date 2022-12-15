@@ -126,11 +126,10 @@ class Pump2Starter(Resource):
         measurement.measure_id_extended()
         try:
 
-            data = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":9},{"name":"butanal", "protons":1}, {"name":"PAC", "protons":3}], 5)
+            data = MeasurementExtractor("C:/Users/Malzacher/DATA", [{"name":"reference", "protons":9},{"name":"butanal", "protons":1}, {"name":"PAC", "protons":3}], 5)
             concentrations = data.calculate_concentrations()
         except Exception as err:
             print("die exception ist",err)
-            print("ERRRRRRRRROR")
             concentrations = "not there"
         return concentrations
 
@@ -213,7 +212,7 @@ class AutomatedProcess(Resource):
         
         try:
 
-            data = MeasurementExtractor("C:/PROJECTS/DATA", [{"name":"reference", "protons":9},{"name":"butanal", "protons":1}, {"name":"PAC", "protons":3}], 5)
+            data = MeasurementExtractor("C:/Users/Malzacher/DATA", [{"name":"reference", "protons":9},{"name":"butanal", "protons":1}, {"name":"PAC", "protons":3}], 5)
             concentrations = data.calculate_concentrations()
         except Exception as err:
             print("die exception ist",err)
@@ -223,7 +222,7 @@ class AutomatedProcess(Resource):
         time.sleep(10)
         
         #print(concentrations)
-        #ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
+        ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
 
         boundaries = {"butanal":3}
         
@@ -238,8 +237,8 @@ class AutomatedProcess(Resource):
     def get(self):
         command = ControlCommands()
         command.start_LED(LED)
-        time.sleep(1800)
-        command.stop_LED()
+        time.sleep(3600)
+        command.stop_LED(LED)
     
         return "inactivation done"
 
@@ -248,14 +247,17 @@ class AutomatedProcess(Resource):
     @namespace.doc()
     def post(self):
         data = request.get_json()
-        print(data[""])
         print(data)
-        pump2 = float(data["pump2"])
-        pump3 = float(data["pump3"])
-        #controller2 = Controller2()
-        #controller2.start_pump_2()
-        #time.sleep(10)
-        #controller2.stop_pump_2()
+        durations = data["duration"]
+        pump2 = float(durations["pump1"])
+        pump3 = float(durations["pump2"])
+        controller2 = Controller2()
+        controller2.start_pump_2()
+        time.sleep(pump2)
+        controller2.stop_pump_2()
+        controller2.start_pump_3()
+        time.sleep(pump3)
+        controller2.stop_pump_3()
         
         time.sleep(10)
     

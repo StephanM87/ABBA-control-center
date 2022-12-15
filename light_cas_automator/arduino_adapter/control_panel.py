@@ -16,7 +16,7 @@ class ControlPanel:
         self.loop_status["measurement"] = measurement
 
     def get_messages(self):
-        chunk = self.socket.recv(8129)
+        chunk = self.socket.recv(8192)
         print("ch8nk ist", chunk)
         payload_stat = SpinsolveMessageReader(self.socket, chunk, self.command)
         messages = payload_stat.define_cases()
@@ -32,7 +32,6 @@ class ControlPanel:
                 self.update_loop_status_dict(True, True)
                 return self.loop_status
             elif messages["message"] == "finished":
-                print("process has finised HAHAHAHAH")
                 time.sleep(5)
                 self.socket.close()
                 self.update_loop_status_dict(False, False)

@@ -44,7 +44,7 @@ class XMLExtractor:
         '''
 
         for i in message.iter():
-            #print(i.tag)
+            print(i.tag)
             if i.tag == "Error":
                 error = i.attrib
                 self.status["status"] = "error"
@@ -53,7 +53,11 @@ class XMLExtractor:
                 progress = i.attrib
                 self.status["status"] = "progress"
                 self.status["message"] = progress["percentage"]
-
+            elif i.tag == "State":
+                progress = i.attrib
+                self.status["status"] = "progress"
+                print(progress["status"])
+                self.status["message"] = 60
 
     def check_if_error_or_status(self):
         '''
