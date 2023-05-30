@@ -26,7 +26,7 @@ PORT = 13000 #Default port
 
 try:
     #arduino = ControlPanel("COM3")
-    board = pyfirmata.Arduino("COM3")
+    board = pyfirmata.Arduino("COM8")
     #board = "hallo"
     p_pwm = board.get_pin('d:9:p')
     p_on_off = board.get_pin("d:2:o")
@@ -66,16 +66,21 @@ class PumpControl(Resource):
 class PumpControl(Resource):
     @namespace.doc()
     def get(self):
-        p_pwm.write(0.1)
-        p_on_off.write(0)
+        #p_pwm.write(0.6)
+        #p_on_off.write(0)
+        controller2 = Controller2()
+        controller2.start_pump_2()
         return "Pumpe läuft"
 
 @namespace.route("/stop_pump")
 class PumpControl(Resource):
     @namespace.doc()
     def get(self):
-        p_pwm.write(0.7) 
-        p_on_off.write(1)
+        controller2 = Controller2()
+        controller2.stop_pump_2()
+        #p_pwm.write(0.2) 
+        #p_on_off.write(1)
+        #p_direction.write(1)
         return "Pumpe aus"
 
 @namespace.route("/test_pump")
@@ -92,13 +97,13 @@ class PumpControl(Resource):
 class Pump2Starter(Resource):
     def get(self):
         controller2 = Controller2()
-        controller2.start_pump_2()
+        controller2.start_pump_3()
         return("pump läuft")
 @namespace.route("/stop_pump_2")
 class Pump2Starter(Resource):
     def get(self):
         controller2 = Controller2()
-        controller2.stop_pump_2()
+        controller2.stop_pump_3()
         return("pump läuft nicht")
 
 @namespace.route("/start_pump_3")
@@ -200,8 +205,15 @@ class AutomatedProcess(Resource):
     @namespace.doc()
     def get(self):
         print("lets go!!!")
+        controller2 = Controller2()
+        #controller2.start_pump_2()
+        time.sleep(70)
         ot_control = ControlCommands()
-        ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
+
+        controller2.stop_pump_2()
+        #ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
+
+
 
         measurement = MeasurementController(HOST,PORT)
         measurement.start_quickscan()
@@ -222,8 +234,8 @@ class AutomatedProcess(Resource):
         time.sleep(10)
         
         #print(concentrations)
-        ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
-
+        #ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
+        controller2.start_pump_2()
         boundaries = {"butanal":3}
         
         #action = OTControlDecisions(p_pwm, p_on_off, p_direction, LED, concentrations, boundaries)
