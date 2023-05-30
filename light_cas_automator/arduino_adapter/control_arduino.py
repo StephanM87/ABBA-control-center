@@ -18,6 +18,7 @@ from light_cas_automator.arduino_adapter.measurement_controller import Measureme
 from light_cas_automator.extract_measurement_data.extract_measurement_data import MeasurementExtractor
 from light_cas_automator.arduino_adapter.ot_control_decisions import OTControlDecisions
 from light_cas_automator.arduino_adapter.control_panel_arduino_2 import Controller2
+from light_cas_automator.arduino_adapter.feeding_arduino_3 import Controller3
 
 
 #from light_cas_automator.arduino_adapter.control_panel import ControlPanel
@@ -77,10 +78,7 @@ class PumpControl(Resource):
     @namespace.doc()
     def get(self):
         controller2 = Controller2()
-        controller2.stop_pump_2()
-        #p_pwm.write(0.2) 
-        #p_on_off.write(1)
-        #p_direction.write(1)
+        controller2.stop_pump_2() # TODO #22
         return "Pumpe aus"
 
 @namespace.route("/test_pump")
@@ -96,28 +94,30 @@ class PumpControl(Resource):
 @namespace.route("/start_pump_2")
 class Pump2Starter(Resource):
     def get(self):
-        controller2 = Controller2()
-        controller2.start_pump_3()
+        feeding_pump_transaminase = Controller3()
+        feeding_pump_transaminase.start_feed_transaminase()
+
         return("pump läuft")
 @namespace.route("/stop_pump_2")
 class Pump2Starter(Resource):
     def get(self):
-        controller2 = Controller2()
-        controller2.stop_pump_3()
+        feeding_pump_transaminase = Controller3()
+        feeding_pump_transaminase.stop_feed_transaminase()
         return("pump läuft nicht")
 
 @namespace.route("/start_pump_3")
 class Pump2Starter(Resource):
     def get(self):
-        controller2 = Controller2()
-        controller2.start_pump_3()
-        return("pump läuft")
+        feeding_pump_transaminase_cofactors = Controller3()
+        feeding_pump_transaminase_cofactors.start_feed_transaminase_cofactors()
+        return("Transaminase cofactor feed start")
+    
 @namespace.route("/stop_pump_3")
 class Pump2Starter(Resource):
     def get(self):
-        controller2 = Controller2()
-        controller2.stop_pump_3()
-        return("pump läuft nicht")
+        feeding_pump_transaminase_cofactors = Controller3()
+        feeding_pump_transaminase_cofactors.stop_feed_transaminase_cofactors()
+        return("Transaminase cofactor feed stop")
 
 
 @namespace.route("/measure")
@@ -206,15 +206,9 @@ class AutomatedProcess(Resource):
     def get(self):
         print("lets go!!!")
         controller2 = Controller2()
-        #controller2.start_pump_2()
         time.sleep(70)
-        ot_control = ControlCommands()
-
+        #ot_control = ControlCommands()
         controller2.stop_pump_2()
-        #ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
-
-
-
         measurement = MeasurementController(HOST,PORT)
         measurement.start_quickscan()
 
@@ -227,14 +221,10 @@ class AutomatedProcess(Resource):
             data = MeasurementExtractor("C:/Users/Malzacher/DATA", [{"name":"reference", "protons":9},{"name":"butanal", "protons":1}, {"name":"PAC", "protons":3}], 5)
             concentrations = data.calculate_concentrations()
         except Exception as err:
-            print("die exception ist",err)
-            print("ERRRRRRRRROR")
+            print("Error during the extraction of measurement data",err)
             concentrations = "not there"
 
         time.sleep(10)
-        
-        #print(concentrations)
-        #ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
         controller2.start_pump_2()
         boundaries = {"butanal":3}
         
@@ -263,14 +253,16 @@ class AutomatedProcess(Resource):
         durations = data["duration"]
         pump2 = float(durations["pump1"])
         pump3 = float(durations["pump2"])
-        controller2 = Controller2()
-        controller2.start_pump_2()
+        # Feed transaminase
+        feeding_pump_transaminase = Controller3()
+        feeding_pump_transaminase.start_feed_transaminase()
         time.sleep(pump2)
-        controller2.stop_pump_2()
-        controller2.start_pump_3()
+        feeding_pump_transaminase.stop_feed_transaminase()
+        # Feed cofactors for transaminase
+        feeding_pump_transaminase_cofactors = Controller3()
+        feeding_pump_transaminase_cofactors.start_feed_transaminase_cofactors()
         time.sleep(pump3)
-        controller2.stop_pump_3()
-        
+        feeding_pump_transaminase_cofactors.stop_feed_transaminase_cofactors()       
         time.sleep(10)
     
         return "successful added enzyme"
