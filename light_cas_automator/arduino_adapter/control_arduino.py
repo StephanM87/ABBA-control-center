@@ -21,25 +21,35 @@ from light_cas_automator.arduino_adapter.control_panel_arduino_2 import Controll
 
 
 #from light_cas_automator.arduino_adapter.control_panel import ControlPanel
+
+'''
+Global variables required to control the NMR. The NMR is controlled via the Spinsolve software, which 
+has a webserver implemented. This webserver is addressable over the localhost: 127.0.0.1 and the standard port 13000. The port can (if necessary)
+be changed in the Spinsolve software.
+
+HOST: Defines the localhost of the Computer on which the spinsolve software is running on
+PORT: Is the Port of the websever in the Spinsolve software (by defaulöt 13000)
+
+'''
 HOST = "127.0.0.1"  # Replace
 PORT = 13000 #Default port
 
+'''
+The first task when starting the ABBA-control center is a test which checks if the Arduino is connected correctly
+It connects to the Arduino (COM 3) which controls the LED strip and checks wether a successful connection is established or not.
+
+'''
+
 try:
-    #arduino = ControlPanel("COM3")
     board = pyfirmata.Arduino("COM3")
-    #board = "hallo"
-    p_pwm = board.get_pin('d:9:p')
-    p_on_off = board.get_pin("d:2:o")
-    p_direction = board.get_pin('d:3:o')
     LED = board.get_pin('d:6:o')
     print("the board is:", board)
-    p_on_off.write(1)
 except Exception as err:
     print(err)
     #raise
 
 
-namespace = Namespace("api/ot", description="")
+namespace = Namespace("api/ot", description="REST API used for the control of the LightCas Microcontroller environment")
 
 @namespace.route("/light_up")
 class PumpControl(Resource):
@@ -62,32 +72,8 @@ class PumpControl(Resource):
         return "LED aus"
         
 
-@namespace.route("/start_pump")
-class PumpControl(Resource):
-    @namespace.doc()
-    def get(self):
-        p_pwm.write(0.1)
-        p_on_off.write(0)
-        return "Pumpe läuft"
 
-@namespace.route("/stop_pump")
-class PumpControl(Resource):
-    @namespace.doc()
-    def get(self):
-        p_pwm.write(0.7) 
-        p_on_off.write(1)
-        return "Pumpe aus"
 
-@namespace.route("/test_pump")
-class PumpControl(Resource):
-    @namespace.doc()
-    def get(self):
-        print("kack ab du kackvogel")
-        ot_control = ControlCommands()
-        ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
-        ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
-
-        return "Pumpe aus"
 @namespace.route("/start_pump_2")
 class Pump2Starter(Resource):
     def get(self):
@@ -133,66 +119,6 @@ class Pump2Starter(Resource):
             concentrations = "not there"
         return concentrations
 
-@namespace.route("/stop_flow")
-class PumpControl(Resource):
-    @namespace.doc()
-    def get(self):
-        p_on_off.write(1)
-        p_direction.write(1) # 1 is counterclockwise pumps into nmr
-        p_pwm.write(0.8)
-        print("pump starts")
-        p_on_off.write(0)
-        time.sleep(25)
-        p_pwm.write(0.65)
-        #time.sleep(10)
-        #p_direction.write(0)
-        time.sleep(35)
-        p_on_off.write(1)
-        
-        HOST = "127.0.0.1"  # Replace
-        PORT = 13000 #Default port
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((HOST, PORT))
-        message  = "<Message>\r\n"
-        message += "   <Start protocol='SHIM 1H SAMPLE'>\r\n"
-        message += "     <Option name='SampleReference' value='4.74' />\r\n"
-        message += "     <Option name='Shim' value='QuickShim1' />\r\n"
-        message += "   </Start>\r\n"
-        message += "</Message>\r\n"
-        print('\r\nSend message:')
-        print(message)
-        s.send(message.encode())
-        s.close()
-
-        time.sleep(200)
-
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((HOST, PORT))
-        message  = "<Message>\r\n"
-        message +="<Start protocol='1D EXTENDED+'>\r\n"
-        message +="<Option name='Number' value='4' />\r\n"
-        message +="<Option name='AquisitionTime' value='3.2' />\r\n"
-        message +="<Option name='RepetitionTime' value='30' />\r\n"
-        message +="<Option name='PulseAngle' value='90' />\r\n"
-        message += "   </Start>\r\n"
-        message += "</Message>\r\n"
-        print('\r\nSend message:')
-        print(message)
-        s.send(message.encode())
-        s.close()
-
-        time.sleep(130)
-        print("pump changes direction")
-        p_on_off.write(1)
-        p_pwm.write(0.65)
-        p_direction.write(0) # 0 is clockwise, pumps into reactor
-        p_on_off.write(0)
-        print("yeah")
-        #p_direction.write(1)
-        time.sleep(50)
-        p_on_off.write(1)
-        return "Pumpe aus"
-
 
 
 @namespace.route("/automated_system")
@@ -200,12 +126,9 @@ class AutomatedProcess(Resource):
     @namespace.doc()
     def get(self):
         print("lets go!!!")
-        ot_control = ControlCommands()
-        ot_control.stop_flow_pumping_in(p_pwm, p_on_off, p_direction)
-
+        ot_control = ControlCommands() #TODO #27
         measurement = MeasurementController(HOST,PORT)
         measurement.start_quickscan()
-
         measurement.sample_shim()
         measurement.start_quickscan()
         measurement.measure_id_extended()
@@ -221,13 +144,8 @@ class AutomatedProcess(Resource):
 
         time.sleep(10)
         
-        #print(concentrations)
-        ot_control.stop_flow_pumping_out(p_pwm, p_on_off, p_direction)
 
         boundaries = {"butanal":3}
-        
-        #action = OTControlDecisions(p_pwm, p_on_off, p_direction, LED, concentrations, boundaries)
-        #action.get_phase_and_boudaries("butanal")
 
         return concentrations
 

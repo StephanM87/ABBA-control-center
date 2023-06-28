@@ -35,80 +35,6 @@ class ControlCommands:
         '''
         LED.write(0)
 
-    def start_peristaltic_pump(self, p_pwm, p_on_off):
-        '''
-        Starts the peristaltic pump
-
-        Parameters
-        ----------
-        p_pwm object 
-            pin controller (pulse wide modulation pin 9) of the arduino
-        p_on_off:
-            pin controller (digital pin 2) of the arduino
-        
-        Returns
-        -------
-        None
-        '''
-        p_pwm.write(0.7)
-        p_on_off.write(0)
-
-    def stop_peristaltic_pump(self, p_pwm, p_on_off):
-        '''
-        Starts the peristaltic pump
-
-        Parameters
-        ----------
-        p_pwm object 
-            pin controller (pulse wide modulation pin 9) of the arduino
-        p_on_off:
-            pin controller (digital pin 2) of the arduino
-        
-        Returns
-        -------
-        None
-        '''
-        
-        p_pwm.write(0.7) 
-        p_on_off.write(1)
-
-    def change_spped_peristaltic_pump(self, p_pwm, speed):
-        '''
-        Starts the peristaltic pump
-
-        Parameters
-        ----------
-        p_pwm object 
-            pin controller (pulse wide modulation pin 9) of the arduino
-        speed: float
-            float between 0 and 1 controlling the speed of the peristaltic pump
-        
-        Returns
-        -------
-        None
-        '''
-
-        p_pwm.write(speed)
-
-    def change_direction_of_peristaltic_pump(self, p_direction, direction):
-        '''
-        chenges the direction of the peristaltic pump
-
-        Parameters
-        ----------
-        p_direction: object 
-            pin controller (pulse wide modulation pin 3) of the arduino
-        direction: integer
-            integer controlling the pump direction 1 means counterclockwise, 0 clockwise
-        
-        Returns
-        -------
-        None
-        '''
-
-        p_direction.write(direction)
-        
-
 
 
     def start_shimm(self):
@@ -137,13 +63,6 @@ class ControlCommands:
     def check_quick_scan(self):
         message = '<?xml version="1.0" encoding="UTF-8"?>'
         message+='<Message>\r\n'
-        #message+= '<Set>\r\n'
-        #message+= '<DataFolder>\r\n'
-        #message+= '<UserFolder>\r\n'
-        #message+= 'c:/PROJECTS/DATA/Waste'
-        #message+= '</UserFolder>\r\n'
-        #message+= '</DataFolder>\r\n'
-        #message+= '</Set>\rn'\
         message += '<Start protocol="1D PROTON" >\r\n'
         message += '<Option name="Scan" value="QuickScan" />\r\n'
         message += '</Start>\r\n'
@@ -212,56 +131,6 @@ class ControlCommands:
         message += "</Message>"
 
         return message
-
-
-    def stop_flow_pumping_in(self, p_pwm, p_on_off, p_direction):
-        '''
-        Starts the sequence to pump the reactor content into the NMR measurement cell
-
-        Parameters
-        ----------
-        p_pwm:
-            pin controller (pulse wide modulation pin 9) of the arduino
-        p_on_off:
-            pin controller (digital pin 2) of the arduino
-        p_direction: object 
-            pin controller (pulse wide modulation pin 3) of the arduino
-
-        Returns
-        -------
-        None
-        '''
-        self.change_direction_of_peristaltic_pump(p_direction, 1)
-        self.start_peristaltic_pump(p_pwm, p_on_off)
-        time.sleep(15)
-        self.change_spped_peristaltic_pump(p_pwm, 0.65)
-        #self.change_spped_peristaltic_pump(p_pwm, 0.1)
-        time.sleep(85)
-        self.stop_peristaltic_pump(p_pwm, p_on_off)
-
-    def stop_flow_pumping_out(self, p_pwm, p_on_off, p_direction):
-        '''NMR
-        Starts the sequence to pump the content in the NMR cell to the reactor
-
-        Parameters
-        ----------
-        p_pwm:
-            pin controller (pulse wide modulation pin 9) of the arduino
-        p_on_off:
-            pin controller (digital pin 2) of the arduino
-        p_direction: object 
-            pin controller (pulse wide modulation pin 3) of the arduino
-
-        Returns
-        -------
-        None
-        '''
-        self.change_direction_of_peristaltic_pump(p_direction, 0)
-        self.start_peristaltic_pump(p_pwm, p_on_off)
-        time.sleep(15)
-        self.change_spped_peristaltic_pump(p_pwm, 0.65)
-        time.sleep(88)
-        self.stop_peristaltic_pump(p_pwm, p_on_off)
 
         
 
